@@ -13,6 +13,9 @@ endif
 
 let g:loaded_ibus = 1.0
 
+let s:keepcpo           = &cpo
+set cpo&vim
+
 " ------------------------------------------------------------
 " Define functions to Call when enter or leave Insert Mode
 " ------------------------------------------------------------
@@ -70,4 +73,5 @@ EOT
 endfunction
 
 "  ---------------------------------------------------------
-
+let &cpo= s:keepcpo
+unlet s:keepcpo
