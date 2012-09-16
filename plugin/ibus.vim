@@ -23,8 +23,10 @@ function! s:leaveInsertMode()
   " Store last IBus state when in Insert Mode
   if s:is_enabled()
       let b:laststat = 1
+      call s:disable()
+  else
+    let b:laststat=0
   endif
-  call s:disable()
 endfunction
 
 function! s:enterInsertMode()
