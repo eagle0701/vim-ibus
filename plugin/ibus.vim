@@ -32,8 +32,6 @@ endfunction
 function! s:enterInsertMode()
   if exists("b:laststat") && b:laststat == 1
     call s:enable()
-  else
-    let b:laststat=0
   endif
 endfunction
 
