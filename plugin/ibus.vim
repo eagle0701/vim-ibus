@@ -11,7 +11,7 @@ if exists("g:loaded_ibus") || &cp || !has('python3')
   finish
 endif
 
-let g:loaded_ibus = 1.0
+let g:loaded_ibus = 1.1
 
 let s:keepcpo           = &cpo
 set cpo&vim
