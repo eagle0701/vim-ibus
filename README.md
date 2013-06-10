@@ -17,7 +17,7 @@ Installation
 
 Resources
 ----------
-[IBus Reference][2]
+1. [IBus Reference][2]
 
 
 [1]: http://code.google.com/p/ibus/
