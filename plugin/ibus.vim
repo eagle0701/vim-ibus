@@ -39,17 +39,25 @@ autocmd InsertLeave * call s:leaveInsertMode()
 autocmd InsertEnter * call s:enterInsertMode()
 
 " ------------------------------------------------------------
+" Init vim-ibus
+" ------------------------------------------------------------
+function! s:init()
+python3 << EOT
+from gi.repository import IBus
+IBus.init()
+bus = IBus.Bus()
+vim_ibus_ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())
+EOT
+endfunction
+call s:init()
+" ------------------------------------------------------------
 " Define functions to communicate with IBus
 " ------------------------------------------------------------
 function! s:is_enabled()
   python3 << EOT
 import vim
-from gi.repository import IBus
-IBus.init()
-bus = IBus.Bus()
-ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())
-#vim.command('let ibus_is_enabled = ' + str(ic.is_enabled()))
-if ic.is_enabled():
+#vim.command('let ibus_is_enabled = ' + str(vim_ibus_ic.is_enabled()))
+if vim_ibus_ic.is_enabled():
   vim.command('let ibus_is_enabled = 1')
 else:
   vim.command('let ibus_is_enabled = 0')
@@ -59,23 +67,15 @@ endfunction
 
 function! s:enable()
   python3 << EOT
-from gi.repository import IBus
-IBus.init()
-bus = IBus.Bus()
-ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())
-if not ic.is_enabled():
-    ic.enable()
+if not vim_ibus_ic.is_enabled():
+    vim_ibus_ic.enable()
 EOT
 endfunction
 
 function! s:disable()
   python3 << EOT
-from gi.repository import IBus
-IBus.init()
-bus = IBus.Bus()
-ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())
-if ic.is_enabled():
-    ic.disable()
+if vim_ibus_ic.is_enabled():
+    vim_ibus_ic.disable()
 EOT
 endfunction
 
