@@ -55,7 +55,6 @@ endif
 " Init vim-ibus
 " ------------------------------------------------------------
 function! s:ibus_init()
-" FIXME:GVim need to init ibus connection every time
 if s:vim_ibus_init == 0
   python3 << EOT
 import vim
