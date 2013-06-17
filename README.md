@@ -18,6 +18,7 @@ Installation
 Resources
 ----------
 1. [IBus Reference][2]
+2. :help usr_41.txt
 
 
 [1]: http://code.google.com/p/ibus/

@@ -12,6 +12,7 @@ if exists("g:loaded_ibus") || &cp || !has('python3')
 endif
 
 let g:loaded_ibus = 1.1
+let s:vim_ibus_init = 0
 
 let s:keepcpo           = &cpo
 set cpo&vim
@@ -21,11 +22,13 @@ set cpo&vim
 " ------------------------------------------------------------
 function! s:leaveInsertMode()
   " Store last IBus state when in Insert Mode
-  if s:is_enabled()
+  if s:ibus_init()
+    if s:is_enabled()
       let b:laststat = 1
       call s:disable()
-  else
-    let b:laststat=0
+    else
+      let b:laststat=0
+    endif
   endif
 endfunction
 
@@ -38,18 +41,37 @@ endfunction
 autocmd InsertLeave * call s:leaveInsertMode()
 autocmd InsertEnter * call s:enterInsertMode()
 
+
+
+" ------------------------------------------------------------
+" GVim
+" ------------------------------------------------------------
+" IBus.current_input_context will change when we create a new buffer in GVim
+if has('gui_running')
+  autocmd BufCreate * let s:vim_ibus_init = 0
+endif
+
 " ------------------------------------------------------------
 " Init vim-ibus
 " ------------------------------------------------------------
-function! s:init()
-python3 << EOT
+function! s:ibus_init()
+" FIXME:GVim need to init ibus connection every time
+if s:vim_ibus_init == 0
+  python3 << EOT
+import vim
 from gi.repository import IBus
 IBus.init()
 bus = IBus.Bus()
-vim_ibus_ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())
+if bus.current_input_context() is not None:
+    vim_ibus_ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())
+    vim.command('let s:vim_ibus_init = 1')
+else:
+    vim.command('let s:vim_ibus_init = 0')
 EOT
+endif
+return s:vim_ibus_init
 endfunction
-call s:init()
+
 " ------------------------------------------------------------
 " Define functions to communicate with IBus
 " ------------------------------------------------------------
