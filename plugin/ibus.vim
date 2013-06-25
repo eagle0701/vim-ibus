@@ -1,7 +1,7 @@
 " ibus.vim	   remember ibus's input state for each buffer
 " Original Script: https://github.com/bouzuya/vim-ibus.git
 " Modified By:     eagle
-" Version:	   1.1
+" Version:	   1.2
 " ---------------------------------------------------------------------
 
 scriptencoding utf-8
@@ -23,7 +23,7 @@ if ! has('python3') && ! has('python')
 	finish
 endif
 
-let g:loaded_ibus = 1.1
+let g:loaded_ibus = 1
 
 let s:keepcpo           = &cpo
 set cpo&vim
