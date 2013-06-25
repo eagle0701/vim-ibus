@@ -7,15 +7,30 @@
 scriptencoding utf-8
 " Exit when this plugin has been loaded, vi compatible mode set, or vim
 " don't support python3
-if exists("g:loaded_ibus") || &cp || !has('python3')
+if exists("g:loaded_ibus") || &cp
   finish
 endif
 
+function! s:CriticalError(message)
+	echohl ErrorMsg
+	echomsg a:message
+	echohl None
+endfunction
+
+if ! has('python3') && ! has('python')
+	call s:CriticalError('You need vim compiled with Python 2.6+ or 3.2+ support
+		\ for Powerline to work. Please consult the documentation for more details.')
+	finish
+endif
+
 let g:loaded_ibus = 1.1
-let s:vim_ibus_init = 0
 
 let s:keepcpo           = &cpo
 set cpo&vim
+
+let s:vim_ibus_init = 0
+
+let s:pycmd = has('python3') ? 'py3' : 'py'
 
 " ------------------------------------------------------------
 " Define functions to Call when enter or leave Insert Mode
@@ -56,17 +71,15 @@ endif
 " ------------------------------------------------------------
 function! s:ibus_init()
 if s:vim_ibus_init == 0
-  python3 << EOT
-import vim
-from gi.repository import IBus
-IBus.init()
-bus = IBus.Bus()
-if bus.current_input_context() is not None:
-    vim_ibus_ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())
-    vim.command('let s:vim_ibus_init = 1')
-else:
-    vim.command('let s:vim_ibus_init = 0')
-EOT
+  exec s:pycmd "import vim"
+  exec s:pycmd "from gi.repository import IBus"
+  exec s:pycmd "IBus.init()"
+  exec s:pycmd "bus = IBus.Bus()"
+  exec s:pycmd "if bus.current_input_context() is not None:\n"
+                   \ . "   vim_ibus_ic=IBus.InputContext.get_input_context(bus.current_input_context(),bus.get_connection())\n"
+                   \ . "   vim.command('let s:vim_ibus_init = 1')\n"
+                   \ . "else:\n"
+                   \ . "   vim.command('let s:vim_ibus_init = 0')"
 endif
 return s:vim_ibus_init
 endfunction
@@ -75,29 +88,22 @@ endfunction
 " Define functions to communicate with IBus
 " ------------------------------------------------------------
 function! s:is_enabled()
-  python3 << EOT
-import vim
-#vim.command('let ibus_is_enabled = ' + str(vim_ibus_ic.is_enabled()))
-if vim_ibus_ic.is_enabled():
-  vim.command('let ibus_is_enabled = 1')
-else:
-  vim.command('let ibus_is_enabled = 0')
-EOT
+exec s:pycmd "import vim"
+exec s:pycmd "if vim_ibus_ic.is_enabled():\n"
+                 \ . "  vim.command('let ibus_is_enabled = 1')\n"
+                 \ . "else:\n"
+                 \ . "  vim.command('let ibus_is_enabled = 0')"
   return ibus_is_enabled
 endfunction
 
 function! s:enable()
-  python3 << EOT
-if not vim_ibus_ic.is_enabled():
-    vim_ibus_ic.enable()
-EOT
+exec s:pycmd "if not vim_ibus_ic.is_enabled():\n"
+                 \ . "    vim_ibus_ic.enable()"
 endfunction
 
 function! s:disable()
-  python3 << EOT
-if vim_ibus_ic.is_enabled():
-    vim_ibus_ic.disable()
-EOT
+exec s:pycmd "if vim_ibus_ic.is_enabled():\n"
+                 \ . "    vim_ibus_ic.disable()"
 endfunction
 
 "  ---------------------------------------------------------

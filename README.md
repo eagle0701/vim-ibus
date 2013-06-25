@@ -6,8 +6,9 @@ ibus.vim
 Requirements
 ----------
 
-* Vim with Python 3 support.(vim -v | grep python)
-* python3-gi libibus-1.0-dev
+* Vim with python or python 3 support.(vim -v | grep python)
+* libibus-1.0-dev
+* python-gi or python3-gi
 
 Installation
 ----------
